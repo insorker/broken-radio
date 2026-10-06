@@ -90,6 +90,7 @@ export class CommonLab extends BrokenRadio {
 export class PlayerLab extends CommonLab {
   protected player: Player
   protected playerPos: Coordinate
+  private nextPlayerMoveAt: number = 0
 
   constructor(container: HTMLElement) {
     super(container)
@@ -117,6 +118,17 @@ export class PlayerLab extends CommonLab {
   }
 
   protected updatePlayer() {
+    let now = performance.now()
+    let isMoving = this.keyboard.up || this.keyboard.down || this.keyboard.left || this.keyboard.right
+
+    if (!isMoving) {
+      this.nextPlayerMoveAt = 0
+      return
+    }
+
+    if (now < this.nextPlayerMoveAt) return
+    this.nextPlayerMoveAt = now + 100
+
     if (this.keyboard.up) {
       if (this.player.moveUp(this.world, this.playerPos)) {
         this.playerPos.y--
